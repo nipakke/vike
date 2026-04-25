@@ -1,5 +1,11 @@
 # @nipakke/vike-nuxt-ui
 
+## 0.1.1
+
+### Patch Changes
+
+- 4158fc1: add meta and remove npm token
+
 ## 0.1.0
 
 ### Minor Changes
