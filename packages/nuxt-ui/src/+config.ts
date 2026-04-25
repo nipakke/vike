@@ -18,7 +18,6 @@ if (theme === 'dark' || (theme === 'auto' && window.matchMedia('(prefers-color-s
 }
 </script>`,
   onCreateApp: "import:@nipakke/vike-nuxt-ui/__internal/integration/onCreateApp:default",
-  onBeforeRenderHtml: "import:@nipakke/vike-nuxt-ui/__internal/integration/onBeforeRenderHtml:default",
   headHtmlEnd: "import:@nipakke/vike-nuxt-ui/__internal/integration/headHtmlEnd:default",
   vite: {
     ssr: {
