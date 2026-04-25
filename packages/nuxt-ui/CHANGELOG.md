@@ -1,5 +1,11 @@
 # @nipakke/vike-nuxt-ui
 
+## 0.1.2
+
+### Patch Changes
+
+- 25bac36: fix vite plugin config
+
 ## 0.1.1
 
 ### Patch Changes
