@@ -32,3 +32,6 @@ jobs:
 
       - name: Format Check
         run: vp fmt --check
+
+      - name: Build Packages
+        run: vp run --filter './packages/*' build
