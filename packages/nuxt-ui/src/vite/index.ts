@@ -12,7 +12,7 @@ export default (options: VikeNuxtUIOptions): Plugin[] => {
       config() {
         return {
           ssr: {
-            noExternal: ["@nipakke/vike-nuxt-ui", "@nuxt/ui"],
+            noExternal: ["@nuxt/ui", "@nipakke/vike-nuxt-ui"],
           },
         };
       },

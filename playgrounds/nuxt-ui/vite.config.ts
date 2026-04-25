@@ -8,6 +8,12 @@ export default defineConfig({
     vike(),
     vue(),
     ui({
+      ui: {
+        colors: {
+          primary: "red",
+          neutral: "zinc",
+        },
+      },
       autoImport: {
         imports: ["vue"],
         dts: ".vike/auto-imports.d.ts",
