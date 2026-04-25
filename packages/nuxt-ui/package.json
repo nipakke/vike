@@ -43,7 +43,8 @@
   },
   "exports": {
     "./styles": {
-      "import": "./dist/styles.css",
+      "style": "./dist/styles.css",
+      "default": "./dist/styles.css",
       "types": "./dist/styles.d.ts"
     },
     "./config": "./dist/+config.js",

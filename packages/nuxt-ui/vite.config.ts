@@ -19,6 +19,9 @@ export default defineConfig({
     dts: true,
     clean: false,
     outExtensions: () => ({ js: ".js" }),
+    deps: {
+      neverBundle: ["@nuxt/ui", /^@nuxt\/ui\/.*/]
+    },
     hooks: {
       "build:done": async () => {
         copyFileSync("src/styles.css", "dist/styles.css");
