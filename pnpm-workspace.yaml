@@ -1,0 +1,33 @@
+packages:
+  - packages/*
+  - playgrounds/*
+catalog:
+  "@nuxt/ui": ^4.6.1
+  "@types/node": ^25.6.0
+  "@unhead/vue": ^2.1.13
+  "@universal-middleware/core": ^0.4.17
+  "@vikejs/h3": ^0.2.0
+  "@vitejs/plugin-vue": ^6.0.6
+  h3: ~1.15
+  tailwindcss: ^4.2.4
+  typescript: ^6.0.2
+  unhead: ^2
+  vike: ^0.4.257
+  vike-vue: ^0.9.11
+  vite: ^8
+  vite-plus: latest
+  vitest: npm:@voidzero-dev/vite-plus-test@^0.1.19
+  vue: ^3.5.32
+onlyBuiltDependencies:
+  - esbuild
+  - vue-demi
+overrides:
+  vite: "catalog:"
+  vitest: "catalog:"
+peerDependencyRules:
+  allowAny:
+    - vite
+    - vitest
+  allowedVersions:
+    vite: "*"
+    vitest: "*"

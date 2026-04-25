@@ -1,0 +1,23 @@
+{
+  "name": "@playgrounds/nuxt-ui-minimal",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vike dev",
+    "build": "vike build",
+    "preview": "vike build && vike preview"
+  },
+  "dependencies": {
+    "@nipakke/vike-nuxt-ui": "workspace:*",
+    "@nuxt/ui": "catalog:",
+    "tailwindcss": "catalog:",
+    "vike": "catalog:",
+    "vike-vue": "catalog:",
+    "vue": "catalog:"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

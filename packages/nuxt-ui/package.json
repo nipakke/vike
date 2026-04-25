@@ -1,0 +1,66 @@
+{
+  "name": "@nipakke/vike-nuxt-ui",
+  "description": "Integration with Nuxt UI",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/+config.js",
+  "types": "./dist/+config.d.ts",
+  "typesVersions": {
+    "*": {
+      "config": [
+        "./dist/+config.d.ts"
+      ],
+      "__internal/integration/onCreateApp": [
+        "./dist/onCreateApp.d.ts"
+      ],
+      "__internal/integration/headHtmlEnd": [
+        "./dist/headHtmlEnd.d.ts"
+      ]
+    }
+  },
+  "exports": {
+    "./styles": {
+      "import": "./dist/styles.css",
+      "types": "./dist/styles.d.ts"
+    },
+    "./config": "./dist/+config.js",
+    "./__internal/integration/onCreateApp": "./dist/integration/onCreateApp.js",
+    "./__internal/integration/headHtmlEnd": "./dist/integration/headHtmlEnd.js",
+    "./vite": {
+      "default": "./dist/vite/index.js",
+      "types": "./dist/vite/index.d.ts"
+    }
+  },
+  "scripts": {
+    "dev": "vp pack --watch",
+    "build": "vp pack"
+  },
+  "dependencies": {
+    "vite": "catalog:"
+  },
+  "devDependencies": {
+    "@nuxt/ui": "catalog:",
+    "@types/node": "catalog:",
+    "@unhead/vue": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
+    "tailwindcss": "catalog:",
+    "unhead": "catalog:",
+    "vike": "catalog:",
+    "vike-vue": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:",
+    "vue": "catalog:"
+  },
+  "peerDependencies": {
+    "@nuxt/ui": "4.x",
+    "tailwindcss": "4.x",
+    "vike": ">=0.4.249",
+    "vike-vue": ">=0.7.0",
+    "vue": ">=3.0.0"
+  },
+  "optionalDependencies": {}
+}
