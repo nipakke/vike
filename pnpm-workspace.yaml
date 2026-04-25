@@ -2,7 +2,7 @@ packages:
   - packages/*
   - playgrounds/*
 catalog:
-  "@nuxt/ui": ^4.6.1
+  "@nuxt/ui": ^4.7.0
   "@types/node": ^25.6.0
   "@unhead/vue": ^2.1.13
   "@universal-middleware/core": ^0.4.17
