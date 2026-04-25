@@ -1,5 +1,11 @@
 # @nipakke/vike-nuxt-ui
 
+## 0.1.4
+
+### Patch Changes
+
+- a2f4f0e: remove leftover config oopsie
+
 ## 0.1.3
 
 ### Patch Changes
