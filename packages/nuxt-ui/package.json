@@ -2,6 +2,26 @@
   "name": "@nipakke/vike-nuxt-ui",
   "description": "Integration with Nuxt UI",
   "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nipakke/vike.git",
+    "directory": "packages/nuxt-ui"
+  },
+  "bugs": {
+    "url": "https://github.com/nipakke/vike/issues"
+  },
+  "homepage": "https://github.com/nipakke/vike/tree/main/packages/nuxt-ui#readme",
+  "keywords": [
+    "vike",
+    "nuxt-ui",
+    "vue",
+    "ssr",
+    "vite"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist"
   ],
