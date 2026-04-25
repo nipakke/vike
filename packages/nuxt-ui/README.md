@@ -218,6 +218,12 @@ See the [minimal playground](./playgrounds/nuxt-ui) for a working project with t
 
 ---
 
+## TODO
+
+- Adding `class="isolate"` to the root app container, as recommended by the [Nuxt UI Vue installation guide](https://ui.nuxt.com/docs/getting-started/installation/vue), is not implemented by this package. This might be possible after [vikejs/vike#1979](https://github.com/vikejs/vike/issues/1979) lands.
+
+---
+
 ## Contributing
 
 Contributions are welcome! Feel free to open issues or pull requests.
