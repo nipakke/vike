@@ -28,11 +28,14 @@ jobs:
       - name: Install Dependencies
         run: vp install
 
+      - name: Build packages
+        run: vp run --filter '@nipakke/*' build
+
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: vp run --filter "@nipakke/*" build && vp exec changeset publish
+          publish: vp exec changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
