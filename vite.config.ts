@@ -37,7 +37,7 @@ export default defineConfig({
   },
   lint: {
     options: { typeAware: true, typeCheck: true },
-    ignorePatterns: [],
+    ignorePatterns: ["**/playgrounds/**"],
     rules: {
       "eslint/no-console": "off",
       "eslint/no-unused-vars": [
