@@ -1,5 +1,11 @@
 # @nipakke/vike-nuxt-ui
 
+## 0.1.3
+
+### Patch Changes
+
+- 8cc10ce: Fixed SSR compatibility with `@nuxt/ui/vue-plugin`
+
 ## 0.1.2
 
 ### Patch Changes
