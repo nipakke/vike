@@ -1,6 +1,7 @@
 import { defineConfig } from "vite-plus";
 import { renameSync, existsSync } from "fs";
 
+
 const renameSafeSync = (oldPath: string, newPath: string) => {
   if (existsSync(oldPath)) {
     renameSync(oldPath, newPath);
@@ -35,6 +36,22 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "html"],
-    }
+    },
+    projects: [
+      {
+        test: {
+          name: 'unit',
+          root: './tests/unit',
+          environment: 'node',
+        },
+      },
+      {
+        test: {
+          name: 'unit:browser',
+          root: './tests/unit',
+          environment: 'happy-dom',
+        },
+      },
+    ]
   }
 });

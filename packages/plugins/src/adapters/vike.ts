@@ -50,6 +50,7 @@ export const defineVikeShared = <A>(
       throw new Error(`[defineVikeShared "${key}"] hook() called twice for the same page.`);
     } */
 
+    console.log("HIHI", pageContext.isClientSide)
 
     const store = pageContext.isClientSide ? getStore() : plugin.createStore()
 

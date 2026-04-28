@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vite-plus/test"
-import { buildSerializer, createCodec, createCodecRegistry } from "../../src/core/serializer"
-import { DeserializeError, SerializeError } from "../../src/core/serializer/errors"
+import { buildSerializer, createCodec, createCodecRegistry } from "../../../src/core/serializer"
+import { DeserializeError, SerializeError } from "../../../src/core/serializer/errors"
 import { expectRoundTrip } from "./helpers"
 
 class Vector {
