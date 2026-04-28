@@ -1,4 +1,6 @@
-import type { Serializer } from "../../src/core/serializer/types"
+import type { Serializer } from "../../../src/core/serializer/types"
+import { expect } from "vite-plus/test"
+
 
 export function expectRoundTrip<T>(value: T, serializer: Serializer) {
   const { serialize, deserialize } = serializer

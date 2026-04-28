@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vite-plus/test"
-import { createUseState } from "../../src/core/useState.js"
+import { createUseState } from "../../../src/core/useState.js"
 
 describe('useState', () => {
   const testStateKey = (p?: string) => "test_" + p

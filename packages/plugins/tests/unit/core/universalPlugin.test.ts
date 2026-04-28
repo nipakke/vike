@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vite-plus/test"
 import { ref, isRef } from 'vue'
-import { defineUniversalPlugin } from '../../src/core/definePlugin'
-import { vueSerializer } from '../../src/serializers/vue'
-import { ssrRoundTrip, createStore } from '../helpers'
+import { defineUniversalPlugin } from '../../../src/core/definePlugin'
+import { ssrRoundTrip, createStore } from '../../helpers'
+import { vueCodecRegistry } from "../../../src/adapters/vue"
 
 
 it('plugin', async () => {
@@ -38,7 +38,7 @@ describe.skip('definePlugin', () => {
     const getSession = vi.fn(async () => ({ name: 'john' }))
 
     const plugin = defineUniversalPlugin('auth', {
-      serializers: [vueSerializer],
+      serializers: [vueCodecRegistry],
       fn: async (ctx) => {
         const user = ctx.useState(() => ref<User | null>(null))
         if (!user.value) user.value = await getSession()
@@ -58,7 +58,7 @@ describe.skip('definePlugin', () => {
     const getSession = vi.fn(async () => ({ name: 'jane' }))
 
     const plugin = defineUniversalPlugin('auth', {
-      serializers: [vueSerializer],
+      serializers: [vueCodecRegistry],
       fn: async (ctx) => {
         const user = ctx.useState(() => ref<User | null>(null))
         if (!user.value) user.value = await getSession()

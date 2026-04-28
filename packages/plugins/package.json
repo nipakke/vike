@@ -51,18 +51,28 @@
   },
   "scripts": {
     "dev": "vp pack --watch",
-    "build": "vp pack"
+    "build": "vp pack",
+    "test:e2e": "playwright test",
+    "test:browser": "vitest --config=vitest.browser.config.ts"
   },
   "dependencies": {
+    "@playwright/test": "^1.59.1",
+    "@vitest/browser-playwright": "^4.1.5",
+    "@vitest/browser-preview": "^4.1.5",
+    "@vue/server-renderer": "^3.5.33",
     "devalue": "^5.7.1",
+    "happy-dom": "^20.9.0",
+    "jsdom": "^29.1.0",
     "unctx": "^2.5.0",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vitest": "^4.1.5"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "@unhead/vue": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vitest/coverage-v8": "^4.1.5",
+    "playwright": "^1.59.1",
     "unhead": "catalog:",
     "vike": "catalog:",
     "vike-vue": "catalog:",
