@@ -1,5 +1,14 @@
 # @nipakke/vike-nuxt-ui
 
+## 0.1.5
+
+### Patch Changes
+
+- badaf3f: fix: handle raw ComputedRef in useHead innerHTML for nuxt/ui 4.8 compatibility
+
+  nuxt/ui 4.8 changed colors.ts to pass a ComputedRef directly to useHead
+  instead of a getter function, breaking renderSSRHead in non-Nuxt SSR contexts.
+
 ## 0.1.4
 
 ### Patch Changes
