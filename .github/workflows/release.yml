@@ -19,7 +19,7 @@ jobs:
     environment: prod
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -33,7 +33,7 @@ jobs:
         run: vp install
 
       - name: Build packages
-        run: vp run --filter '@nipakke/*' build
+        run: vp exec turbo build --filter='@nipakke/*'
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "globalDependencies": ["vite.config.ts", "pnpm-workspace.yaml", "package.json"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "cache": true
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "persistent": true,
+      "cache": false
+    },
+    "prepare": {
+      "dependsOn": ["^prepare"],
+      "outputs": ["dist/**"],
+      "cache": true
+    },
+    "lint": {},
+    "check": {},
+    "clean": {
+      "cache": false
+    }
+  }
+}
