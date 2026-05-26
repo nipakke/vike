@@ -1,37 +1,50 @@
 name: CI
 
 on:
-  pull_request:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  check:
-    name: Check
+  quality:
+    name: Quality
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+    timeout-minutes: 10
 
-      - name: Setup Vite+
-        uses: voidzero-dev/setup-vp@v1
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: voidzero-dev/setup-vp@v1
         with:
           node-version: "22"
           cache: true
 
-      - name: Install Dependencies
-        run: vp install
+      - run: vp install
+      - run: vp check
+      - run: vp fmt --check
 
-      - name: Lint
-        run: vp check
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-      - name: Format Check
-        run: vp fmt --check
+    steps:
+      - uses: actions/checkout@v6
 
-      - name: Build Packages
-        run: vp run --filter "@nipakke/*" build
+      - uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}
+
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: "22"
+          cache: true
+
+      - run: vp install
+      - run: vp exec turbo build

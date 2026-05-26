@@ -19,6 +19,7 @@ export default defineConfig({
     },
     experimentalTailwindcss: {},
     ignorePatterns: [
+      ".opencode",
       "**/.nuxt/",
       "**/.output/",
       "**/node_modules/",
@@ -37,7 +38,10 @@ export default defineConfig({
   },
   lint: {
     options: { typeAware: true, typeCheck: true },
-    ignorePatterns: ["**/playgrounds/**"],
+    ignorePatterns: [
+      ".opencode",
+      "**/playgrounds/**"
+    ],
     rules: {
       "eslint/no-console": "off",
       "eslint/no-unused-vars": [

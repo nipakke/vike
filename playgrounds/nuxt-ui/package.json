@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vike dev",
     "build": "vike build",
-    "preview": "vike build && vike preview"
+    "preview": "vike build && vike preview",
+    "clean": "rm -rf dist .vike"
   },
   "dependencies": {
     "@nipakke/vike-nuxt-ui": "workspace:*",

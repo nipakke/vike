@@ -57,7 +57,11 @@
   },
   "scripts": {
     "dev": "vp pack --watch",
-    "build": "vp pack"
+    "build": "vp pack",
+    "prepare": "vp pack",
+    "lint": "vp lint",
+    "check": "vp check",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "vite": "catalog:"
