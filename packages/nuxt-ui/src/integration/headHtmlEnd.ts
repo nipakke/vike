@@ -9,7 +9,7 @@ export default async (pageContext: PageContextServer) => {
   if (!app) {
     throw new Error(
       `[vike-nuxt-ui] "app" was not found in pageContext — this is unexpected and likely a bug in vike-nuxt-ui itself.\n` +
-      `Please open an issue at https://github.com/nipakke/vike`,
+        `Please open an issue at https://github.com/nipakke/vike`,
     );
   }
 
@@ -18,15 +18,15 @@ export default async (pageContext: PageContextServer) => {
   if (!unhead) {
     throw new Error(
       `[vike-nuxt-ui] Unhead was not found in the Vue app context.\n` +
-      `Make sure the vike-nuxt-ui Vite plugin is registered in your vite.config.ts:\n\n` +
-      `  import ui from "@nipakke/vike-nuxt-ui/vite"\n\n` +
-      `  export default defineConfig({\n` +
-      `    plugins: [\n` +
-      `      vike(),\n` +
-      `      vue(),\n` +
-      `      ui(), // <-- this is required\n` +
-      `    ],\n` +
-      `  })\n`,
+        `Make sure the vike-nuxt-ui Vite plugin is registered in your vite.config.ts:\n\n` +
+        `  import ui from "@nipakke/vike-nuxt-ui/vite"\n\n` +
+        `  export default defineConfig({\n` +
+        `    plugins: [\n` +
+        `      vike(),\n` +
+        `      vue(),\n` +
+        `      ui(), // <-- this is required\n` +
+        `    ],\n` +
+        `  })\n`,
     );
   }
 
@@ -49,10 +49,16 @@ export default async (pageContext: PageContextServer) => {
     return headTags;
   } catch (error) {
     console.error("\x1b[41m\x1b[97m [vike-nuxt-ui] SSR HEAD RENDER FAILED \x1b[0m");
-    console.error("\x1b[33m⚠ Impact:\x1b[0m  Nuxt UI critical styles (color mode, CSS variables) will NOT be injected server-side.");
-    console.error("\x1b[33m⚠ Symptom:\x1b[0m The page may appear \x1b[1munstyled or flash white\x1b[0m until client-side hydration completes.");
+    console.error(
+      "\x1b[33m⚠ Impact:\x1b[0m  Nuxt UI critical styles (color mode, CSS variables) will NOT be injected server-side.",
+    );
+    console.error(
+      "\x1b[33m⚠ Symptom:\x1b[0m The page may appear \x1b[1munstyled or flash white\x1b[0m until client-side hydration completes.",
+    );
     console.error("\x1b[31m✖ Cause:\x1b[0m  ", error instanceof Error ? error.message : String(error));
-    console.error("\x1b[36mℹ Likely reason:\x1b[0m A reactive value (ref/computed) was passed directly to useHead() and could not be unwrapped.");
+    console.error(
+      "\x1b[36mℹ Likely reason:\x1b[0m A reactive value (ref/computed) was passed directly to useHead() and could not be unwrapped.",
+    );
     console.error("\x1b[36mℹ Please open an issue at:\x1b[0m https://github.com/nipakke/vike");
     console.error("\x1b[90mStack trace:\x1b[0m", error);
   }
