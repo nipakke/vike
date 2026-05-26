@@ -2,7 +2,7 @@ packages:
   - packages/*
   - playgrounds/*
 catalog:
-  "@nuxt/ui": ^4.7.0
+  "@nuxt/ui": ^4.8.0
   "@types/node": ^25.6.0
   "@unhead/vue": ^2.1.13
   "@universal-middleware/core": ^0.4.17
@@ -12,7 +12,7 @@ catalog:
   tailwindcss: ^4.2.4
   typescript: ^6.0.2
   unhead: ^2
-  vike: ^0.4.257
+  vike: ^0.4.259
   vike-vue: ^0.9.11
   vite: ^8
   vite-plus: latest
