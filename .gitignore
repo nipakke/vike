@@ -16,5 +16,8 @@ playwright-report/
 coverage/
 .nyc_output/
 
+# TypeScript build info
+*.tsbuildinfo
+
 # General build artifacts
 build/
