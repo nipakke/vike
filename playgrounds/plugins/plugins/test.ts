@@ -8,7 +8,6 @@ export default definePlugin({
 
 
     ctx.globalContext.config.onCreateApp ||= []
-
     ctx.globalContext.config.onCreateApp.push(ctx => {
       console.log("Fus")
     })

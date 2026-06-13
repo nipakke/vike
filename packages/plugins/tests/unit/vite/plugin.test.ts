@@ -289,7 +289,7 @@ describe('generateTypeDeclaration', () => {
     expect(output).not.toContain("from 'vike/types'")
   })
 
-  it('exports PluginProvides and PluginProvideLookup helper types', () => {
+  it('exports PluginProvides helper type', () => {
     // Arrange
     const pluginFiles: PluginFileInfo[] = [
       { filename: 'db.ts', mode: 'universal', baseName: 'db' },
@@ -298,9 +298,9 @@ describe('generateTypeDeclaration', () => {
     // Act
     const output = generateTypeDeclaration(pluginFiles, pluginsDir)
 
-    // Assert — exported helper types present
+    // Assert — exported helper type present
     expect(output).toContain('export type PluginProvides')
-    expect(output).toContain('export type PluginProvideLookup<K extends keyof PluginProvides>')
+    expect(output).not.toContain('PluginProvideLookup')
   })
 
   it('generates property keys for each plugin file', () => {

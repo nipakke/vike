@@ -7,7 +7,6 @@
 
     <div>
 
-      {{ pageContext.$plugins.test }}
     </div>
   </div>
 </template>
@@ -15,9 +14,6 @@
 
 <script lang="ts" setup>
 import { usePageContext } from 'vike-vue/usePageContext';
-
-
-const pageContext = usePageContext()
 
 
 
