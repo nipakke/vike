@@ -1,25 +1,46 @@
+import type { PageContext } from 'vike/types'
+
 export type Enforcement = 'pre' | 'default' | 'post'
 
-export type PluginContext = {
-  isServer: boolean
-}
+/**
+ * @deprecated Use `PageContext` from `vike/types` instead.
+ * The setup function now receives the full Vike PageContext directly.
+ */
+export type PluginContext = PageContext
 
-export type VikePluginHook = (ctx: PluginContext) => void | Promise<void>
+/**
+ * What the user writes: setup can return `{ provide: T }` or nothing.
+ * The `provide` extraction is handled internally by definePlugin.
+ */
+export type VikePluginHook<T = void> = (
+  ctx: PageContext
+) => { provide: T } | void | Promise<{ provide: T } | void>
 
-export type VikePluginOptions = {
+/** The shape the user passes to definePlugin(). */
+export type VikePluginOptions<T = void> = {
   name?: string
   enforce?: Enforcement
   order?: number
   parallel?: boolean
-  await?: boolean
-  setup: VikePluginHook
+  setup: VikePluginHook<T>
 }
 
-export type VikePlugin = {
+/**
+ * The resolved plugin object. `setup` here is the WRAPPED version —
+ * it already extracts `.provide` and returns `T` directly.
+ */
+export type VikePluginSetup<T = void> = (ctx: PageContext) => T | Promise<T>
+
+export type VikePlugin<T = void> = {
   name: string
   enforce: Enforcement
   order: number
   parallel: boolean
-  await: boolean
-  setup: VikePluginHook
+  /** Already provide-extracted — returns T, not { provide: T } */
+  setup: VikePluginSetup<T>
+  /** Phantom type marker */
+  provide?: T
 }
+
+/** Extract the provide type T from a VikePlugin<T> */
+export type PluginProvide<T> = T extends VikePlugin<infer R> ? R : never

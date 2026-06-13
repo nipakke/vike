@@ -25,7 +25,7 @@ export default defineConfig({
     tsconfig: "tsconfig.build.json",
     outExtensions: () => ({ js: ".js" }),
     deps: {
-      neverBundle: ['vike', '@nipakke/vike-plugins/vike']
+      neverBundle: ['vike', '@nipakke/vike-plugins/vike', 'virtual:vike-plugins']
     },
     hooks: {
       "build:done": async () => {

@@ -44,6 +44,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "knitwork": "^1.3.0",
     "vite": "catalog:"
   },
   "devDependencies": {

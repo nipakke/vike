@@ -10,7 +10,7 @@ Auto-discovered, ordered, per-request plugin runner for [Vike](https://vike.dev)
 packages/plugins/
 ├── src/
 │   ├── core/
-│   │   ├── types.ts           # VikePlugin, PluginContext, Enforcement, etc.
+│   │   ├── types.ts           # VikePlugin, Enforcement, etc.
 │   │   └── definePlugin.ts    # Factory: options → resolved VikePlugin
 │   ├── adapters/
 │   │   └── vike.ts            # runPlugins(), sortPlugins(), re-exports
@@ -275,9 +275,8 @@ Without this, esbuild would inline `runPlugins` directly into `dist/runner.js`. 
 **Algorithm:**
 
 ```
-1. Determine isServer = !pageContext.isClientSide
-2. Sort plugins by enforce group → order → name
-3. Iterate through sorted plugins:
+1. Sort plugins by enforce group → order → name
+2. Iterate through sorted plugins:
    a. If plugin.parallel is true:
       - Collect consecutive parallel plugins into a batch
       - Execute all via Promise.all
@@ -311,19 +310,16 @@ function sortPlugins(plugins: VikePlugin[]): VikePlugin[] {
 ### 6.3 Per-Plugin Execution
 
 ```typescript
-async function runOne(plugin: VikePlugin, isServer: boolean): Promise<void> {
-  const ctx: PluginContext = { isServer }
-  const result = plugin.setup(ctx)
-  if (plugin.await !== false) {
-    await result
+async function runOne(plugin: VikePlugin, pageContext: PageContext): Promise<void> {
+  const value = await plugin.setup(pageContext)
+  if (value !== undefined) {
+    pageContext.$plugins ??= {}
+    pageContext.$plugins[plugin.name] = value
   }
-  // if await: false, the promise is fire-and-forget
 }
 ```
 
-**`await` flag behavior:**
-- `await: true` (default): `await` the result of `setup()`. The next plugin (or batch) waits.
-- `await: false`: call `setup()` but do NOT await. The function returns immediately. The plugin's promise continues in the background. Errors in fire-and-forget plugins become unhandled promise rejections (no error propagation to the caller).
+The plugin's `setup()` function receives the **full Vike `PageContext`** — not a stripped-down object. This gives plugins access to the complete request context (URL, route params, headers, etc.) in addition to `isClientSide`.
 
 ### 6.4 Parallel Batching
 
@@ -348,19 +344,18 @@ This means `parallel: true` on a plugin only groups it with its immediate neighb
 ```typescript
 type Enforcement = 'pre' | 'default' | 'post'
 
-type PluginContext = {
-  isServer: boolean
-}
+// The setup function receives the full Vike PageContext.
+// Use `isClientSide` to determine server vs client environment.
+type VikePluginHook<T = void> = (
+  ctx: PageContext
+) => { provide: T } | void | Promise<{ provide: T } | void>
 
-type VikePluginHook = (ctx: PluginContext) => void | Promise<void>
-
-type VikePluginOptions = {
+type VikePluginOptions<T = void> = {
   name?: string
   enforce?: Enforcement
   order?: number
   parallel?: boolean
-  await?: boolean
-  setup: VikePluginHook
+  setup: VikePluginHook<T>
 }
 ```
 
@@ -372,8 +367,7 @@ type VikePlugin = {
   enforce: Enforcement  // always defined (default: 'default')
   order: number     // always defined (default: 0)
   parallel: boolean // always defined (default: false)
-  await: boolean    // always defined (default: true)
-  setup: VikePluginHook
+  setup: VikePluginSetup<T>
 }
 ```
 
@@ -384,7 +378,7 @@ type VikePlugin = {
 All types are re-exported from `@nipakke/vike-plugins/vike`:
 
 ```typescript
-export type { VikePlugin, VikePluginOptions, PluginContext, Enforcement } from '../core/types'
+export type { VikePlugin, VikePluginOptions, Enforcement, PluginProvide } from '../core/types'
 ```
 
 ---
@@ -429,7 +423,7 @@ The `_config` → `+config` rename is a workaround for esbuild's filename saniti
 
 ### 9.2 Framework-Agnostic Core
 
-The package has zero Vue, React, Solid, or framework-specific dependencies. The `VikePlugin` interface only depends on `{ isServer: boolean }`. Framework-specific behavior (e.g., serializing Vue `ref`s) would be a separate entrypoint — the core runner doesn't care what framework the user is using.
+The package has zero Vue, React, Solid, or framework-specific dependencies. The `VikePlugin` setup function receives the full Vike `PageContext`, giving plugins access to `isClientSide`, URL, route params, and all standard PageContext properties. Framework-specific behavior (e.g., serializing Vue `ref`s) would be a separate entrypoint — the core runner doesn't care what framework the user is using.
 
 ### 9.3 Import String Pattern (not Inlined Config)
 
@@ -463,7 +457,7 @@ Plugins with `await: false` are fire-and-forget. If their promise rejects, the e
 
 ### 10.5 No Payload Serialization (Yet)
 
-The current implementation does not serialize state between server and client (no `useState`, no serializer pipeline). A plugin's `setup()` runs independently on server and client with no shared state. The `PluginContext` only has `isServer` — it does not carry serialized data. This is a planned feature (see PLAN.MD for the `useState` and serializer design).
+The current implementation does not serialize state between server and client (no `useState`, no serializer pipeline). A plugin's `setup()` runs independently on server and client with no shared state. The plugin receives the full Vike `PageContext` which includes `isClientSide` — but no serialized data is carried between environments. This is a planned feature (see PLAN.MD for the `useState` and serializer design).
 
 ### 10.6 Watch Requires Dev Server
 

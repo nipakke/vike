@@ -3,5 +3,22 @@
     <h1 class="text-3xl font-bold">Vike + Nuxt UI</h1>
     <p class="text-gray-500">A minimal SSR-ready example.</p>
     <button>It works!</button>
+
+
+    <div>
+
+      {{ pageContext.$plugins.test }}
+    </div>
   </div>
 </template>
+
+
+<script lang="ts" setup>
+import { usePageContext } from 'vike-vue/usePageContext';
+
+
+const pageContext = usePageContext()
+
+
+
+</script>

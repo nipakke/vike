@@ -4,6 +4,6 @@ export default definePlugin({
   name: 'testing',
   setup: async (ctx) => {
     // Plugin initializes on both server and client
-    // ctx.isServer is true on server, false on client
+    // ctx.isClientSide is false on server, true on client
   }
 })
