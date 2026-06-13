@@ -1,14 +1,15 @@
-import { defineVikeShared } from "@nipakke/vike-vue-plugins/vike"
-import { vueSerializer } from "@nipakke/vike-vue-plugins/vue"
-import { isReactive, reactive, ref } from "vue"
+import { definePlugin } from "@nipakke/vike-plugins/vike"
 
-
-export const { hook, use: useAuth } = defineVikeShared("somekey", (ctx) => {
-  const server = ctx.useState("server", () => ctx.isServer)
-
-  return {
-    server,
+export default definePlugin({
+  name: 'auth',
+  setup: async (ctx) => {
+    // Plugin runs on both server and client per-request
+    if (ctx.isServer) {
+      // Server-side only setup (e.g., read cookies, validate session)
+      console.log('[auth] running on server')
+    } else {
+      // Client-side only setup (e.g., restore session from localStorage)
+      console.log('[auth] running on client')
+    }
   }
 })
-
-export default hook

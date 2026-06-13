@@ -1,1 +1,0 @@
-export { vueCodecRegistry } from "./serializer"

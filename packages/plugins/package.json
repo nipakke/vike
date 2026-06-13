@@ -1,7 +1,7 @@
 {
-  "name": "@nipakke/vike-vue-plugins",
+  "name": "@nipakke/vike-plugins",
   "private": true,
-  "description": "Vue plugins",
+  "description": "Auto-discovered per-request plugin system for Vike",
   "version": "0.0.0",
   "license": "MIT",
   "repository": {
@@ -15,8 +15,7 @@
   "homepage": "https://github.com/nipakke/vike/tree/main/packages/plugins#readme",
   "keywords": [
     "vike",
-    "vue-plugins",
-    "vue",
+    "plugins",
     "ssr",
     "vite"
   ],
@@ -29,65 +28,38 @@
   "type": "module",
   "exports": {
     "./vike": {
-      "import": {
-        "types": "./dist/vike.d.ts",
-        "default": "./dist/vike.js"
-      },
-      "require": {
-        "types": "./dist/vike.d.cts",
-        "default": "./dist/vike.cjs"
-      }
+      "types": "./dist/vike.d.ts",
+      "default": "./dist/vike.js"
     },
-    "./vue": {
-      "import": {
-        "types": "./dist/vue.d.ts",
-        "default": "./dist/vue.js"
-      },
-      "require": {
-        "types": "./dist/vue.d.cts",
-        "default": "./dist/vue.cjs"
-      }
-    }
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "default": "./dist/vite.js"
+    },
+    "./runner": "./dist/runner.js",
+    "./config": "./dist/+config.js"
   },
   "scripts": {
     "dev": "vp pack --watch",
     "build": "vp pack",
-    "test:e2e": "playwright test",
-    "test:browser": "vitest --config=vitest.browser.config.ts"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@playwright/test": "^1.59.1",
-    "@vitest/browser-playwright": "^4.1.5",
-    "@vitest/browser-preview": "^4.1.5",
-    "@vue/server-renderer": "^3.5.33",
-    "devalue": "^5.7.1",
-    "happy-dom": "^20.9.0",
-    "jsdom": "^29.1.0",
-    "unctx": "^2.5.0",
-    "vite": "catalog:",
-    "vitest": "^4.1.5"
+    "vite": "catalog:"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@types/node": "catalog:",
-    "@unhead/vue": "catalog:",
-    "@vitejs/plugin-vue": "catalog:",
+    "@vitest/browser-playwright": "^4.1.5",
+    "@vitest/browser-preview": "^4.1.5",
     "@vitest/coverage-v8": "^4.1.5",
+    "happy-dom": "^20.9.0",
+    "jsdom": "^29.1.0",
     "playwright": "^1.59.1",
-    "unhead": "catalog:",
     "vike": "catalog:",
-    "vike-vue": "catalog:",
-    "vite": "catalog:",
     "vite-plus": "catalog:",
-    "vue": "catalog:"
+    "vitest": "^4.1.5"
   },
   "peerDependencies": {
-    "vike": ">=0.4.249",
-    "vike-vue": ">=0.7.0",
-    "vue": ">=3.0.0"
-  },
-  "peerDependenciesMeta": {
-    "vue": {
-      "optional": true
-    }
+    "vike": ">=0.4.249"
   }
 }

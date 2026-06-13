@@ -14,7 +14,9 @@ export default defineConfig({
   pack: {
     entry: {
       'vike': 'src/adapters/vike.ts',
-      'vue': 'src/adapters/vue/index.ts',
+      'vite': 'src/vite/index.ts',
+      'runner': 'src/runner.ts',
+      '_config': 'src/+config.ts',
     },
     format: "esm",
     dts: true,
@@ -23,7 +25,7 @@ export default defineConfig({
     tsconfig: "tsconfig.build.json",
     outExtensions: () => ({ js: ".js" }),
     deps: {
-      neverBundle: ['vue', '@tanstack/store', 'devalue', 'vike']
+      neverBundle: ['vike', '@nipakke/vike-plugins/vike']
     },
     hooks: {
       "build:done": async () => {
@@ -43,13 +45,6 @@ export default defineConfig({
           name: 'unit',
           root: './tests/unit',
           environment: 'node',
-        },
-      },
-      {
-        test: {
-          name: 'unit:browser',
-          root: './tests/unit',
-          environment: 'happy-dom',
         },
       },
     ]

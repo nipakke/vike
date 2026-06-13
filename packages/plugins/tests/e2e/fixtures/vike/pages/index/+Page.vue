@@ -9,15 +9,14 @@
   </ul>
 
   <div>
-    {{ testPlugin.msg }}
+    hello from {{ isClient ? 'client' : 'server' }}
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useTestPlugin } from '../../plugins/test-plugin';
+import { usePageContext } from '../../renderer/usePageContext';
 import Counter from './Counter.vue'
 
-
-const testPlugin = useTestPlugin()
-
+const pageContext = usePageContext()
+const isClient = pageContext.value?.isClientSide
 </script>

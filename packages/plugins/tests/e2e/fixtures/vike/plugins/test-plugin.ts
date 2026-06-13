@@ -1,12 +1,9 @@
-import { defineVikeShared } from "../../../../../src/adapters/vike"
+import { definePlugin } from '../../../../../src/core/definePlugin.js'
 
-const { hook, use } = defineVikeShared("testing", async (ctx) => {
-  const isServer = ctx.useState("isServer", () => ctx.isServer)
-
-  return {
-    msg: `hello from ${isServer ? 'server' : 'client'}`
+export default definePlugin({
+  name: 'testing',
+  setup: async (ctx) => {
+    // Plugin initializes on both server and client
+    // ctx.isServer is true on server, false on client
   }
 })
-
-export const useTestPlugin = use
-export default hook;

@@ -8,11 +8,12 @@
     "preview": "vike build && vike preview"
   },
   "dependencies": {
-    "@nipakke/vike-vue-plugins": "workspace:*",
+    "@nipakke/vike-plugins": "workspace:*",
     "@tailwindcss/vite": "^4.2.4",
     "tailwindcss": "catalog:",
     "vike": "catalog:",
     "vike-vue": "catalog:",
+    "vite-plugin-inspect": "^11.4.1",
     "vue": "catalog:"
   },
   "devDependencies": {
