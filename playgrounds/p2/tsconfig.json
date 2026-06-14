@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "types": ["vite/client"],
+    "paths": {
+      "#build/ui": ["./node_modules/.nuxt-ui/ui"],
+      "#build/ui/*": ["./node_modules/.nuxt-ui/ui/*"]
+    },
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true
+  },
+  "include": ["**/*.ts", "**/*.vue", ".vike/auto-imports.d.ts", ".vike/components.d.ts"],
+  "exclude": ["dist"]
+}

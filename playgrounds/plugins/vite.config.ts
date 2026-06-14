@@ -11,6 +11,8 @@ export default defineConfig({
     vike(),
     vue(),
     tailwindcss(),
-    Inspect(),
+    Inspect({
+      build: true
+    }),
   ],
 });
