@@ -1,5 +1,5 @@
 import type { PageContext } from 'vike/types'
-import { runPlugins } from "./adapters/run-plugins"
+import { runPlugins } from "./run-plugins.js"
 
 /**
  * Static onCreatePageContext hook. Dynamically imports the virtual module

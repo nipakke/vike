@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { runPlugins } from '../../src/adapters/run-plugins.js'
+import { runPlugins } from '../../src/vike/run-plugins.js'
 import { definePlugin } from '../../src/core/definePlugin.js'
 import type { VikePlugin } from '../../src/core/types.js'
 
@@ -9,30 +9,24 @@ describe('runPlugins', () => {
     const executionOrder: string[] = []
 
     const plugins: VikePlugin[] = [
-      definePlugin({
-        name: 'third',
-        enforce: 'post',
-        order: 0,
-        setup: () => {
+      definePlugin(
+        () => {
           executionOrder.push('third')
         },
-      }),
-      definePlugin({
-        name: 'first',
-        enforce: 'pre',
-        order: 0,
-        setup: () => {
+        { name: 'third', enforce: 'post', order: 0 }
+      ),
+      definePlugin(
+        () => {
           executionOrder.push('first')
         },
-      }),
-      definePlugin({
-        name: 'second',
-        enforce: 'default',
-        order: 0,
-        setup: () => {
+        { name: 'first', enforce: 'pre', order: 0 }
+      ),
+      definePlugin(
+        () => {
           executionOrder.push('second')
         },
-      }),
+        { name: 'second', enforce: 'default', order: 0 }
+      ),
     ]
 
     const pageContext = { isClientSide: false } as any // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -50,27 +44,24 @@ describe('runPlugins', () => {
     const parallelResults: number[] = []
 
     const plugins: VikePlugin[] = [
-      definePlugin({
-        name: 'par-a',
-        parallel: true,
-        setup: () => {
+      definePlugin(
+        () => {
           executionLog.push({ name: 'par-a', action: 'start' })
           parallelResults.push(1)
           executionLog.push({ name: 'par-a', action: 'end' })
         },
-      }),
-      definePlugin({
-        name: 'par-b',
-        parallel: true,
-        setup: () => {
+        { name: 'par-a', parallel: true }
+      ),
+      definePlugin(
+        () => {
           executionLog.push({ name: 'par-b', action: 'start' })
           parallelResults.push(2)
           executionLog.push({ name: 'par-b', action: 'end' })
         },
-      }),
-      definePlugin({
-        name: 'sequential',
-        setup: () => {
+        { name: 'par-b', parallel: true }
+      ),
+      definePlugin(
+        () => {
           executionLog.push({ name: 'sequential', action: 'start' })
           // At this point, both parallel plugins must have finished
           executionLog.push({
@@ -79,7 +70,8 @@ describe('runPlugins', () => {
           })
           executionLog.push({ name: 'sequential', action: 'end' })
         },
-      }),
+        { name: 'sequential' }
+      ),
     ]
 
     const pageContext = { isClientSide: false } as any // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -118,16 +110,14 @@ describe('runPlugins', () => {
   it('sequential plugins wait for the previous one to complete', async () => {
     // Arrange — two sequential plugins where the second depends on the first's output
     const plugins: VikePlugin[] = [
-      definePlugin({
-        name: 'first',
-        order: 1,
-        setup: () => ({ provide: { step: 1 } }),
-      }),
-      definePlugin({
-        name: 'second',
-        order: 2,
-        setup: () => ({ provide: { step: 2 } }),
-      }),
+      definePlugin(
+        () => ({ provide: { step: 1 } }),
+        { name: 'first', order: 1 }
+      ),
+      definePlugin(
+        () => ({ provide: { step: 2 } }),
+        { name: 'second', order: 2 }
+      ),
     ]
 
     const pageContext = { isClientSide: true } as any // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -145,22 +135,18 @@ describe('runPlugins', () => {
   it('accumulates multiple provides across plugins', async () => {
     // Arrange — three plugins each providing different data
     const plugins: VikePlugin[] = [
-      definePlugin({
-        name: 'auth',
-        enforce: 'pre',
-        setup: () => ({ provide: { user: 'alice' } }),
-      }),
-      definePlugin({
-        name: 'db',
-        enforce: 'pre',
-        order: 10,
-        setup: () => ({ provide: { connected: true } }),
-      }),
-      definePlugin({
-        name: 'config',
-        enforce: 'default',
-        setup: () => ({ provide: { theme: 'dark' } }),
-      }),
+      definePlugin(
+        () => ({ provide: { user: 'alice' } }),
+        { name: 'auth', enforce: 'pre' }
+      ),
+      definePlugin(
+        () => ({ provide: { connected: true } }),
+        { name: 'db', enforce: 'pre', order: 10 }
+      ),
+      definePlugin(
+        () => ({ provide: { theme: 'dark' } }),
+        { name: 'config', enforce: 'default' }
+      ),
     ]
 
     const pageContext = { isClientSide: false } as any // eslint-disable-line @typescript-eslint/no-explicit-any

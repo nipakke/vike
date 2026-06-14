@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest'
-import { runOne } from '../../src/adapters/run-one.js'
+import { runOne } from '../../src/vike/run-one.js'
 import { definePlugin } from '../../src/core/definePlugin.js'
 import type { PageContext } from 'vike/types'
 
 describe('runOne', () => {
   it('stores `provide` value in pageContext.$plugins', async () => {
-    const plugin = definePlugin({
-      name: 'auth',
-      setup: async () => ({ provide: { userId: 42 } }),
-    })
+    const plugin = definePlugin(
+      async () => ({ provide: { userId: 42 } }),
+      { name: 'auth' }
+    )
 
     const pageContext = {} as PageContext
     await runOne(plugin, pageContext)
@@ -17,10 +17,10 @@ describe('runOne', () => {
   })
 
   it('stores sync provide value', async () => {
-    const plugin = definePlugin({
-      name: 'data',
-      setup: () => ({ provide: { items: [1, 2, 3] } }),
-    })
+    const plugin = definePlugin(
+      () => ({ provide: { items: [1, 2, 3] } }),
+      { name: 'data' }
+    )
 
     const pageContext = {} as PageContext
     await runOne(plugin, pageContext)
@@ -29,10 +29,10 @@ describe('runOne', () => {
   })
 
   it('stores nothing when setup returns void', async () => {
-    const plugin = definePlugin({
-      name: 'logger',
-      setup: () => { /* side effect only */ },
-    })
+    const plugin = definePlugin(
+      () => { /* side effect only */ },
+      { name: 'logger' }
+    )
 
     const pageContext = {} as PageContext
     await runOne(plugin, pageContext)
@@ -41,10 +41,10 @@ describe('runOne', () => {
   })
 
   it('stores nothing when setup returns undefined', async () => {
-    const plugin = definePlugin({
-      name: 'noop',
-      setup: () => undefined,
-    })
+    const plugin = definePlugin(
+      () => undefined,
+      { name: 'noop' }
+    )
 
     const pageContext = {} as PageContext
     await runOne(plugin, pageContext)
@@ -53,14 +53,14 @@ describe('runOne', () => {
   })
 
   it('initializes $plugins when first plugin provides', async () => {
-    const plugin1 = definePlugin({
-      name: 'first',
-      setup: () => ({ provide: { a: 1 } }),
-    })
-    const plugin2 = definePlugin({
-      name: 'second',
-      setup: () => ({ provide: { b: 2 } }),
-    })
+    const plugin1 = definePlugin(
+      () => ({ provide: { a: 1 } }),
+      { name: 'first' }
+    )
+    const plugin2 = definePlugin(
+      () => ({ provide: { b: 2 } }),
+      { name: 'second' }
+    )
 
     const pageContext = {} as PageContext
 

@@ -13,10 +13,10 @@ console.log(isDev)
 export default defineConfig({
   pack: {
     entry: {
-      'vike': 'src/adapters/vike.ts',
+      'vike': 'src/vike/index.ts',
       'vite': 'src/vite/index.ts',
-      'runner': 'src/runner.ts',
-      '_config': 'src/+config.ts',
+      'runner': 'src/vike/runner.ts',
+      '_config': 'src/vike/+config.ts',
     },
     format: "esm",
     dts: true,

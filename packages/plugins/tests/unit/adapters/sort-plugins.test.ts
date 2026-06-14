@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { sortPlugins } from '../../src/adapters/sort-plugins.js'
+import { sortPlugins } from '../../src/vike/sort-plugins.js'
 import { definePlugin } from '../../src/core/definePlugin.js'
 import type { Enforcement, VikePlugin } from '../../src/core/types.js'
 
@@ -7,9 +7,9 @@ describe('sortPlugins', () => {
   it('sorts pre before default before post', () => {
     // Arrange — plugins in random order with different enforce groups
     const plugins: VikePlugin[] = [
-      definePlugin({ name: 'post-1', enforce: 'post', setup: () => {} }),
-      definePlugin({ name: 'pre-1', enforce: 'pre', setup: () => {} }),
-      definePlugin({ name: 'default-1', enforce: 'default', setup: () => {} }),
+      definePlugin(() => {}, { name: 'post-1', enforce: 'post' }),
+      definePlugin(() => {}, { name: 'pre-1', enforce: 'pre' }),
+      definePlugin(() => {}, { name: 'default-1', enforce: 'default' }),
     ]
 
     // Act
@@ -24,9 +24,9 @@ describe('sortPlugins', () => {
   it('sorts by order field within the same enforce group', () => {
     // Arrange — all in same enforce group, different order values
     const plugins: VikePlugin[] = [
-      definePlugin({ name: 'c', order: 30, setup: () => {} }),
-      definePlugin({ name: 'a', order: 10, setup: () => {} }),
-      definePlugin({ name: 'b', order: 20, setup: () => {} }),
+      definePlugin(() => {}, { name: 'c', order: 30 }),
+      definePlugin(() => {}, { name: 'a', order: 10 }),
+      definePlugin(() => {}, { name: 'b', order: 20 }),
     ]
 
     // Act
@@ -41,9 +41,9 @@ describe('sortPlugins', () => {
   it('uses alphabetical tiebreaker when order is equal', () => {
     // Arrange — same enforce, same order, different names
     const plugins: VikePlugin[] = [
-      definePlugin({ name: 'zeta', order: 0, setup: () => {} }),
-      definePlugin({ name: 'alpha', order: 0, setup: () => {} }),
-      definePlugin({ name: 'beta', order: 0, setup: () => {} }),
+      definePlugin(() => {}, { name: 'zeta', order: 0 }),
+      definePlugin(() => {}, { name: 'alpha', order: 0 }),
+      definePlugin(() => {}, { name: 'beta', order: 0 }),
     ]
 
     // Act
@@ -58,8 +58,8 @@ describe('sortPlugins', () => {
   it('returns a new array — does not mutate the original', () => {
     // Arrange
     const plugins: VikePlugin[] = [
-      definePlugin({ name: 'b', order: 2, setup: () => {} }),
-      definePlugin({ name: 'a', order: 1, setup: () => {} }),
+      definePlugin(() => {}, { name: 'b', order: 2 }),
+      definePlugin(() => {}, { name: 'a', order: 1 }),
     ]
     const original = [...plugins]
 
@@ -89,7 +89,7 @@ describe('sortPlugins', () => {
 
   it('handles single plugin', () => {
     // Arrange
-    const plugin = definePlugin({ name: 'only', setup: () => {} })
+    const plugin = definePlugin(() => {}, { name: 'only' })
     const plugins: VikePlugin[] = [plugin]
 
     // Act
