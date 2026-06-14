@@ -3,9 +3,10 @@ export { definePlugin } from './definePlugin.js'
 export { type PluginContext } from './context.js'
 export type {
   Enforcement,
-  VikePluginHook,
-  VikePluginSetup,
-  VikePluginOptions,
-  VikePlugin,
+  PluginEntry,
   PluginProvide,
+  VikePlugin,
+  VikePluginHook,
+  VikePluginOptions,
+  VikePluginSetup,
 } from './types.js'

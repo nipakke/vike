@@ -15,8 +15,8 @@ const RESOLVED_VIRTUAL_ID = '\0' + VIRTUAL_ID
  * Vite plugin that auto-discovers VikePlugin files.
  *
  * Generates:
- * 1. `virtual:vike-plugins` — the plugin registry, filtered per build
- *    target via Vite's load() hook `ssr` option.
+ * 1. `virtual:vike-plugins` — a module exporting a `rawPlugins` record
+ *    keyed by plugin name, filtered per build target via Vite's load() hook.
  * 2. `{dtsDir}/vike-plugins.d.ts` — type declarations written to disk
  *    so TypeScript picks them up automatically (default: `.vike/`).
  */
@@ -28,8 +28,6 @@ export function vikePlugins(opts?: VikePluginsOptions): Plugin {
   let warned = false
   let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
-  // `projectRoot` is always set (via configResolved or configureServer)
-  // before any hook uses the plugins directory, so no lazy guard needed.
   const pluginsDir = () => resolve(projectRoot, dir)
 
   function regenerateTypes(): void {
@@ -53,15 +51,15 @@ export function vikePlugins(opts?: VikePluginsOptions): Plugin {
       return null
     },
 
-    load(id: string, options?: { ssr?: boolean }) {
+    load(id: string) {
       if (id !== RESOLVED_VIRTUAL_ID) return null
       try {
         const pd = pluginsDir()
         const files = scanDirectory(pd)
-        return generateVirtualModule(files, pd, options?.ssr ?? false)
+        return generateVirtualModule(files, pd)
       } catch (err) {
         console.error('[vike-plugins] Failed to generate virtual module:', err)
-        return 'export const rawPlugins = []'
+        return 'export const rawPlugins = {}'
       }
     },
 
@@ -70,8 +68,6 @@ export function vikePlugins(opts?: VikePluginsOptions): Plugin {
       const pd = pluginsDir()
       const parentDir = resolve(pd, '..')
 
-      // Always watch the parent directory so plugin dir creation / deletion
-      // is picked up without requiring a dev-server restart.
       server.watcher.add(parentDir)
 
       let pdExists = existsSync(pd)
@@ -97,16 +93,10 @@ export function vikePlugins(opts?: VikePluginsOptions): Plugin {
         }, 300)
       }
 
-      // React to the plugins directory itself appearing or disappearing.
-      // Only the specific plugins dir path triggers action — sibling dirs
-      // in the same parent directory are ignored.
       const handleParentChange = (eventPath: string): void => {
         if (resolve(eventPath) !== pd) return
-
         pdExists = existsSync(pd)
-
         if (pdExists) {
-          // Newly created — add explicit watcher for file events inside it.
           server.watcher.add(pd)
         }
         debouncedOnPluginChange()
@@ -115,8 +105,6 @@ export function vikePlugins(opts?: VikePluginsOptions): Plugin {
       server.watcher.on('addDir', handleParentChange)
       server.watcher.on('unlinkDir', handleParentChange)
 
-      // React to individual plugin files inside the plugins directory.
-      // Guarded by pdExists so no-op when the dir hasn't been created yet.
       const isPluginFile = (path: string): boolean =>
         pdExists && path.startsWith(pd) && /\.(ts|js|mts|mjs)$/.test(path)
 
@@ -129,7 +117,6 @@ export function vikePlugins(opts?: VikePluginsOptions): Plugin {
       server.watcher.on('unlink', handleChange)
       server.watcher.on('change', handleChange)
 
-      // Add explicit watcher if directory already exists at startup
       if (pdExists) {
         server.watcher.add(pd)
       }

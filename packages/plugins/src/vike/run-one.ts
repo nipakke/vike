@@ -1,21 +1,22 @@
 import type { PageContext } from 'vike/types'
-import type { VikePlugin } from '../core/index.js'
+import type { PluginEntry } from '../core/index.js'
 
 /**
- * Execute a single plugin hook and capture its return value.
+ * Execute a single plugin hook and store its return value in $plugins.
  *
  * The plugin's `setup` already has `provide` extraction baked in
- * (see definePlugin), so whatever it returns is stored directly.
+ * (see definePlugin), so whatever it returns is stored directly
+ * under `$plugins[entry.name]`.
  */
 export async function runOne(
-  plugin: VikePlugin,
+  entry: PluginEntry,
   pageContext: PageContext
 ): Promise<void> {
-  const value = await plugin.setup(pageContext)
+  const value = await entry.plugin.setup(pageContext)
 
   if (value !== undefined) {
     const ctx = pageContext as PageContext & { $plugins?: Record<string, unknown> }
     ctx.$plugins ??= {}
-    ctx.$plugins[plugin.name] = value
+    ctx.$plugins[entry.name] = value
   }
 }

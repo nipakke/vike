@@ -1,3 +1,5 @@
+import type { Config } from "vike/types";
+
 export default {
   name: '@nipakke/vike-plugins',
   // At runtime, the runner module dynamically imports the virtual module
@@ -5,4 +7,4 @@ export default {
   // runPlugins() with all auto-discovered plugin files from the user's
   // project.
   onCreatePageContext: 'import:@nipakke/vike-plugins/runner:onCreatePageContext',
-}
+} satisfies Config

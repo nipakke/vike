@@ -1,5 +1,7 @@
+import type { PluginEntry } from '../core/types.js'
 import type { PageContext } from 'vike/types'
-import { runPlugins } from "./run-plugins.js"
+import type { VikePlugin } from '../core/types.js'
+import { runPlugins } from './run-plugins.js'
 
 /**
  * Static onCreatePageContext hook. Dynamically imports the virtual module
@@ -9,8 +11,16 @@ import { runPlugins } from "./run-plugins.js"
 export async function onCreatePageContext(pageContext: PageContext): Promise<void> {
   const mod = await import('virtual:vike-plugins')
 
-  const plugins = mod.rawPlugins ?? []
-  if (plugins.length > 0) {
-    await runPlugins(plugins, pageContext)
+  const rawPlugins: Record<string, VikePlugin | null> = mod.rawPlugins ?? {}
+
+  const entries: PluginEntry[] = []
+  for (const [name, plugin] of Object.entries(rawPlugins)) {
+    if (plugin) {
+      entries.push({ name, plugin })
+    }
+  }
+
+  if (entries.length > 0) {
+    await runPlugins(entries, pageContext)
   }
 }

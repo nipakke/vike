@@ -6,6 +6,9 @@ import { vikePlugins } from "@nipakke/vike-plugins/vite"
 import Inspect from "vite-plugin-inspect"
 
 export default defineConfig({
+  optimizeDeps: {
+    exclude: ['@nipakke/vike-plugins']
+  },
   plugins: [
     Inspect(),
     vike(),

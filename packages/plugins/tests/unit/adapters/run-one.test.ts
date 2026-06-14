@@ -1,7 +1,12 @@
 import { describe, it, expect } from 'vitest'
 import { runOne } from '../../src/vike/run-one.js'
 import { definePlugin } from '../../src/core/definePlugin.js'
+import type { PluginEntry } from '../../src/core/types.js'
 import type { PageContext } from 'vike/types'
+
+function entry(name: string, plugin: ReturnType<typeof definePlugin>): PluginEntry {
+  return { name, plugin }
+}
 
 describe('runOne', () => {
   it('stores `provide` value in pageContext.$plugins', async () => {
@@ -11,7 +16,7 @@ describe('runOne', () => {
     )
 
     const pageContext = {} as PageContext
-    await runOne(plugin, pageContext)
+    await runOne(entry('auth', plugin), pageContext)
 
     expect((pageContext as Record<string, unknown>).$plugins).toEqual({ auth: { userId: 42 } })
   })
@@ -23,7 +28,7 @@ describe('runOne', () => {
     )
 
     const pageContext = {} as PageContext
-    await runOne(plugin, pageContext)
+    await runOne(entry('data', plugin), pageContext)
 
     expect((pageContext as Record<string, unknown>).$plugins).toEqual({ data: { items: [1, 2, 3] } })
   })
@@ -35,7 +40,7 @@ describe('runOne', () => {
     )
 
     const pageContext = {} as PageContext
-    await runOne(plugin, pageContext)
+    await runOne(entry('logger', plugin), pageContext)
 
     expect((pageContext as Record<string, unknown>).$plugins).toBeUndefined()
   })
@@ -47,7 +52,7 @@ describe('runOne', () => {
     )
 
     const pageContext = {} as PageContext
-    await runOne(plugin, pageContext)
+    await runOne(entry('noop', plugin), pageContext)
 
     expect((pageContext as Record<string, unknown>).$plugins).toBeUndefined()
   })
@@ -64,10 +69,10 @@ describe('runOne', () => {
 
     const pageContext = {} as PageContext
 
-    await runOne(plugin1, pageContext)
+    await runOne(entry('first', plugin1), pageContext)
     expect((pageContext as Record<string, unknown>).$plugins).toEqual({ first: { a: 1 } })
 
-    await runOne(plugin2, pageContext)
+    await runOne(entry('second', plugin2), pageContext)
     expect((pageContext as Record<string, unknown>).$plugins).toEqual({
       first: { a: 1 },
       second: { b: 2 },

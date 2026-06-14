@@ -13,8 +13,6 @@ export type PluginFileMode = 'server' | 'client' | 'universal'
 export interface PluginFileInfo {
   filename: string
   mode: PluginFileMode
+  /** File base name with mode suffix (.server, .client) stripped. */
   baseName: string
-  /** Normalized name derived from baseName (trimmed, lowercase, special chars → _).
-   *  Used as fallback when a plugin does not have an explicit name. */
-  suggestedName: string
 }

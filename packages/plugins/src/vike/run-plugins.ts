@@ -1,4 +1,4 @@
-import type { VikePlugin } from '../core/index.js'
+import type { PluginEntry } from '../core/index.js'
 import type { PageContext } from 'vike/types'
 import { sortPlugins } from './sort-plugins.js'
 import { runOne } from './run-one.js'
@@ -12,31 +12,28 @@ import { runOne } from './run-one.js'
  * Within a sequential position, plugins with `parallel: true` are
  * batched and executed via Promise.all — all must finish before
  * the next sequential plugin runs.
- *
- * @param plugins - Array of VikePlugin definitions to execute
- * @param pageContext - Vike page context for the current request
  */
 export async function runPlugins(
-  plugins: VikePlugin[],
+  entries: PluginEntry[],
   pageContext: PageContext
 ): Promise<void> {
-  const sorted = sortPlugins(plugins)
+  const sorted = sortPlugins(entries)
 
   let i = 0
   while (i < sorted.length) {
-    const plugin = sorted[i]
+    const entry = sorted[i]
 
-    if (plugin.parallel) {
+    if (entry.plugin.parallel) {
       // Collect all consecutive parallel plugins at this position
-      const batch: VikePlugin[] = []
-      while (i < sorted.length && sorted[i].parallel) {
+      const batch: PluginEntry[] = []
+      while (i < sorted.length && sorted[i].plugin.parallel) {
         batch.push(sorted[i])
         i++
       }
-      const promises = batch.map((p) => runOne(p, pageContext))
+      const promises = batch.map((e) => runOne(e, pageContext))
       await Promise.all(promises)
     } else {
-      await runOne(plugin, pageContext)
+      await runOne(entry, pageContext)
       i++
     }
   }

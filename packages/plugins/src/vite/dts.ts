@@ -1,12 +1,18 @@
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 import type { PluginFileInfo } from './types'
+import { normalizePluginName } from '../core/plugin-name.js'
+import { detectDuplicateNames, formatDuplicateError } from './virtual-module.js'
 
 const TYPES_FILENAME = 'vike-plugins.d.ts'
 
 function propertyKey(name: string): string {
   if (/^[a-zA-Z_$][\w$]*$/.test(name)) return name
   return `'${name}'`
+}
+
+function getPluginName(file: PluginFileInfo): string {
+  return normalizePluginName(file.baseName) || 'unnamed'
 }
 
 function buildPluginEntries(
@@ -20,7 +26,7 @@ function buildPluginEntries(
   return pluginFiles
     .map((file) => {
       const absPath = resolve(pluginsDir, file.filename).replace(/\\/g, '/')
-      const key = propertyKey(file.suggestedName)
+      const key = propertyKey(getPluginName(file))
       return `${indent}// @plugin ${file.filename}
 ${indent}${key}: PluginProvide<typeof import('${absPath}').default>`
     })
@@ -31,6 +37,10 @@ export function generateTypeDeclaration(
   pluginFiles: PluginFileInfo[],
   pluginsDir: string,
 ): string {
+  const duplicates = detectDuplicateNames(pluginFiles)
+  if (duplicates) {
+    throw new Error(formatDuplicateError(duplicates))
+  }
   const $pluginsEntries = buildPluginEntries(pluginFiles, pluginsDir, '        ')
   const providesEntries = buildPluginEntries(pluginFiles, pluginsDir, '  ')
 

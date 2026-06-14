@@ -1,5 +1,5 @@
 
 declare module 'virtual:vike-plugins' {
-  const rawPlugins: import('./core/types').VikePlugin[]
+  const rawPlugins: Record<string, import('./core/types').VikePlugin | null>
   export { rawPlugins }
 }

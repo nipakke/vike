@@ -38,6 +38,16 @@
     "./runner": "./dist/runner.js",
     "./config": "./dist/+config.js"
   },
+  "typesVersions": {
+    "*": {
+      "config": [
+        "./dist/+config.d.ts"
+      ],
+      "runner": [
+        "./dist/runner.d.ts"
+      ]
+    }
+  },
   "scripts": {
     "dev": "vp pack --watch",
     "build": "vp pack",

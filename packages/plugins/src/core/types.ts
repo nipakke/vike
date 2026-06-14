@@ -41,5 +41,11 @@ export type VikePlugin<T = void> = {
   provide?: T
 }
 
+/** A named plugin entry from the virtual module registry. */
+export interface PluginEntry<T = void> {
+  name: string
+  plugin: VikePlugin<T>
+}
+
 /** Extract the provide type T from a VikePlugin<T> */
 export type PluginProvide<T> = T extends VikePlugin<infer R> ? R : never

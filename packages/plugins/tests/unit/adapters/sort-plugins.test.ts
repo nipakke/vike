@@ -1,103 +1,87 @@
 import { describe, it, expect } from 'vitest'
 import { sortPlugins } from '../../src/vike/sort-plugins.js'
 import { definePlugin } from '../../src/core/definePlugin.js'
-import type { Enforcement, VikePlugin } from '../../src/core/types.js'
+import type { PluginEntry, VikePlugin } from '../../src/core/types.js'
+
+function entry(name: string, plugin: VikePlugin): PluginEntry {
+  return { name, plugin }
+}
 
 describe('sortPlugins', () => {
   it('sorts pre before default before post', () => {
-    // Arrange — plugins in random order with different enforce groups
-    const plugins: VikePlugin[] = [
-      definePlugin(() => {}, { name: 'post-1', enforce: 'post' }),
-      definePlugin(() => {}, { name: 'pre-1', enforce: 'pre' }),
-      definePlugin(() => {}, { name: 'default-1', enforce: 'default' }),
+    const entries: PluginEntry[] = [
+      entry('post-1', definePlugin(() => {}, { name: 'post-1', enforce: 'post' })),
+      entry('pre-1', definePlugin(() => {}, { name: 'pre-1', enforce: 'pre' })),
+      entry('default-1', definePlugin(() => {}, { name: 'default-1', enforce: 'default' })),
     ]
 
-    // Act
-    const sorted = sortPlugins(plugins)
+    const sorted = sortPlugins(entries)
 
-    // Assert — enforce group priority: pre(0) → default(1) → post(2)
     expect(sorted[0].name).toBe('pre-1')
     expect(sorted[1].name).toBe('default-1')
     expect(sorted[2].name).toBe('post-1')
   })
 
   it('sorts by order field within the same enforce group', () => {
-    // Arrange — all in same enforce group, different order values
-    const plugins: VikePlugin[] = [
-      definePlugin(() => {}, { name: 'c', order: 30 }),
-      definePlugin(() => {}, { name: 'a', order: 10 }),
-      definePlugin(() => {}, { name: 'b', order: 20 }),
+    const entries: PluginEntry[] = [
+      entry('c', definePlugin(() => {}, { name: 'c', order: 30 })),
+      entry('a', definePlugin(() => {}, { name: 'a', order: 10 })),
+      entry('b', definePlugin(() => {}, { name: 'b', order: 20 })),
     ]
 
-    // Act
-    const sorted = sortPlugins(plugins)
+    const sorted = sortPlugins(entries)
 
-    // Assert — ascending by order
     expect(sorted[0].name).toBe('a')
     expect(sorted[1].name).toBe('b')
     expect(sorted[2].name).toBe('c')
   })
 
   it('uses alphabetical tiebreaker when order is equal', () => {
-    // Arrange — same enforce, same order, different names
-    const plugins: VikePlugin[] = [
-      definePlugin(() => {}, { name: 'zeta', order: 0 }),
-      definePlugin(() => {}, { name: 'alpha', order: 0 }),
-      definePlugin(() => {}, { name: 'beta', order: 0 }),
+    const entries: PluginEntry[] = [
+      entry('zeta', definePlugin(() => {}, { name: 'zeta', order: 0 })),
+      entry('alpha', definePlugin(() => {}, { name: 'alpha', order: 0 })),
+      entry('beta', definePlugin(() => {}, { name: 'beta', order: 0 })),
     ]
 
-    // Act
-    const sorted = sortPlugins(plugins)
+    const sorted = sortPlugins(entries)
 
-    // Assert — alphabetical by name when order is equal
     expect(sorted[0].name).toBe('alpha')
     expect(sorted[1].name).toBe('beta')
     expect(sorted[2].name).toBe('zeta')
   })
 
   it('returns a new array — does not mutate the original', () => {
-    // Arrange
-    const plugins: VikePlugin[] = [
-      definePlugin(() => {}, { name: 'b', order: 2 }),
-      definePlugin(() => {}, { name: 'a', order: 1 }),
+    const entries: PluginEntry[] = [
+      entry('b', definePlugin(() => {}, { name: 'b', order: 2 })),
+      entry('a', definePlugin(() => {}, { name: 'a', order: 1 })),
     ]
-    const original = [...plugins]
+    const original = [...entries]
 
-    // Act
-    const sorted = sortPlugins(plugins)
+    const sorted = sortPlugins(entries)
 
-    // Assert — new array reference
-    expect(sorted).not.toBe(plugins)
-    // Original order is preserved
-    expect(plugins).toEqual(original)
-    // Sorted order differs from original
+    expect(sorted).not.toBe(entries)
+    expect(entries).toEqual(original)
     expect(sorted[0].name).toBe('a')
     expect(sorted[1].name).toBe('b')
   })
 
   it('handles empty array input', () => {
-    // Arrange
-    const plugins: VikePlugin[] = []
+    const entries: PluginEntry[] = []
 
-    // Act
-    const sorted = sortPlugins(plugins)
+    const sorted = sortPlugins(entries)
 
-    // Assert — returns empty array, no error
     expect(sorted).toEqual([])
-    expect(sorted).not.toBe(plugins) // new array even for empty
+    expect(sorted).not.toBe(entries)
   })
 
   it('handles single plugin', () => {
-    // Arrange
     const plugin = definePlugin(() => {}, { name: 'only' })
-    const plugins: VikePlugin[] = [plugin]
+    const entries: PluginEntry[] = [entry('only', plugin)]
 
-    // Act
-    const sorted = sortPlugins(plugins)
+    const sorted = sortPlugins(entries)
 
-    // Assert — single-element array, new reference
     expect(sorted).toHaveLength(1)
-    expect(sorted[0]).toBe(plugin)
-    expect(sorted).not.toBe(plugins)
+    expect(sorted[0].plugin).toBe(plugin)
+    expect(sorted).not.toBe(entries)
   })
 })
