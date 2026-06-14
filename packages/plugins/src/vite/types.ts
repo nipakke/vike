@@ -14,4 +14,7 @@ export interface PluginFileInfo {
   filename: string
   mode: PluginFileMode
   baseName: string
+  /** Normalized name derived from baseName (trimmed, lowercase, special chars → _).
+   *  Used as fallback when a plugin does not have an explicit name. */
+  suggestedName: string
 }

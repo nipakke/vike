@@ -4,7 +4,7 @@ import type { PageContext } from 'vike/types'
 
 describe('definePlugin', () => {
   it('applies all defaults when only setup is provided', () => {
-    const plugin = definePlugin({ setup: () => {} })
+    const plugin = definePlugin(() => {})
 
     expect(plugin.name).toBe('unnamed')
     expect(plugin.enforce).toBe('default')
@@ -13,7 +13,7 @@ describe('definePlugin', () => {
   })
 
   it('preserves explicit values', () => {
-    const plugin = definePlugin({ name: 'auth', enforce: 'pre', order: 10, setup: () => {} })
+    const plugin = definePlugin(() => {}, { name: 'auth', enforce: 'pre', order: 10 })
 
     expect(plugin.name).toBe('auth')
     expect(plugin.enforce).toBe('pre')
@@ -26,14 +26,14 @@ describe('definePlugin', () => {
       await new Promise((r) => setTimeout(r, 1))
     }
 
-    const plugin = definePlugin({ setup })
+    const plugin = definePlugin(setup)
     // The original setup is wrapped — not same reference
     expect(plugin.setup).not.toBe(setup)
     // But the wrapper still calls through (tested by provide tests below)
   })
 
   it('preserves parallel flag', () => {
-    const plugin = definePlugin({ parallel: true, setup: () => {} })
+    const plugin = definePlugin(() => {}, { parallel: true })
 
     expect(plugin.parallel).toBe(true)
   })
@@ -41,11 +41,9 @@ describe('definePlugin', () => {
   it('setup function receives the full PageContext', () => {
     let captured: unknown = null
 
-    const plugin = definePlugin({
-      setup: (ctx) => {
+    const plugin = definePlugin((ctx) => {
         captured = ctx
-      },
-    })
+      })
 
     const pageContext = { isClientSide: true, urlOriginal: '/test', routeParams: {} } as PageContext
     plugin.setup(pageContext)
@@ -53,8 +51,8 @@ describe('definePlugin', () => {
   })
 
   it('produces distinct objects — no shared mutable state', () => {
-    const a = definePlugin({ setup: () => {} })
-    const b = definePlugin({ setup: () => {} })
+    const a = definePlugin(() => {})
+    const b = definePlugin(() => {})
 
     // Distinct object references — each call returns a fresh object
     expect(a).not.toBe(b)
@@ -69,10 +67,10 @@ describe('definePlugin', () => {
 
   it('is pure: same config produces structurally equal output', () => {
     const setup = () => {}
-    const config = { name: 'test', enforce: 'post' as const, order: 5, setup }
+    const config = { name: 'test', enforce: 'post' as const, order: 5 }
 
-    const a = definePlugin(config)
-    const b = definePlugin(config)
+    const a = definePlugin(setup, config)
+    const b = definePlugin(setup, config)
 
     // Distinct objects
     expect(a).not.toBe(b)
@@ -88,9 +86,9 @@ describe('definePlugin', () => {
   // ── Provide return value tests ──
 
   it('preserves setup function that returns a provide value', async () => {
-    const plugin = definePlugin({
-      setup: () => ({ provide: { userId: 1, role: 'admin' } }),
-    })
+    const plugin = definePlugin(
+      () => ({ provide: { userId: 1, role: 'admin' } })
+    )
 
     // The wrapper extracts .provide automatically
     const pageContext = { isClientSide: true } as PageContext
@@ -101,7 +99,7 @@ describe('definePlugin', () => {
   })
 
   it('setup returning void: returns undefined', async () => {
-    const plugin = definePlugin({ setup: () => {} })
+    const plugin = definePlugin(() => {})
 
     const pageContext = { isClientSide: false } as PageContext
     const result = await plugin.setup(pageContext)
@@ -110,12 +108,12 @@ describe('definePlugin', () => {
   })
 
   it('async setup returning provide: extracts provide value', async () => {
-    const plugin = definePlugin({
-      setup: async () => {
+    const plugin = definePlugin(
+      async () => {
         await Promise.resolve()
         return { provide: { loaded: true } }
-      },
-    })
+      }
+    )
 
     const pageContext = { isClientSide: true } as PageContext
     const result = await plugin.setup(pageContext)

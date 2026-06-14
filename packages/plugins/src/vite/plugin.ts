@@ -24,20 +24,17 @@ export function vikePlugins(opts?: VikePluginsOptions): Plugin {
   const dir = opts?.dir ?? 'plugins/'
   const dtsDir = opts?.dtsDir ?? '.vike'
   const disableWarning = opts?.disableExperimentalWarning ?? false
-  let resolvedPluginsDir = ''
   let projectRoot = ''
   let warned = false
+  let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
-  function getPluginsDir(): string {
-    if (!resolvedPluginsDir) {
-      resolvedPluginsDir = resolve(projectRoot || process.cwd(), dir)
-    }
-    return resolvedPluginsDir
-  }
+  // `projectRoot` is always set (via configResolved or configureServer)
+  // before any hook uses the plugins directory, so no lazy guard needed.
+  const pluginsDir = () => resolve(projectRoot, dir)
 
   function regenerateTypes(): void {
     if (!projectRoot) return
-    const pd = getPluginsDir()
+    const pd = pluginsDir()
     const files = scanDirectory(pd)
     writeTypeFile(projectRoot, files, pd, dtsDir)
   }
@@ -57,41 +54,85 @@ export function vikePlugins(opts?: VikePluginsOptions): Plugin {
     },
 
     load(id: string, options?: { ssr?: boolean }) {
-      if (id === RESOLVED_VIRTUAL_ID) {
-        const pd = getPluginsDir()
+      if (id !== RESOLVED_VIRTUAL_ID) return null
+      try {
+        const pd = pluginsDir()
         const files = scanDirectory(pd)
         return generateVirtualModule(files, pd, options?.ssr ?? false)
+      } catch (err) {
+        console.error('[vike-plugins] Failed to generate virtual module:', err)
+        return 'export const rawPlugins = []'
       }
-      return null
     },
 
     configureServer(server: ViteDevServer) {
       projectRoot = server.config.root
-      const pd = getPluginsDir()
+      const pd = pluginsDir()
+      const parentDir = resolve(pd, '..')
 
-      if (!existsSync(pd)) return
+      // Always watch the parent directory so plugin dir creation / deletion
+      // is picked up without requiring a dev-server restart.
+      server.watcher.add(parentDir)
 
-      server.watcher.add(pd)
+      let pdExists = existsSync(pd)
 
+      const onPluginChange = (): void => {
+        try {
+          const mod = server.moduleGraph.getModuleById(RESOLVED_VIRTUAL_ID)
+          if (mod) {
+            server.moduleGraph.invalidateModule(mod)
+          }
+          regenerateTypes()
+          server.ws.send({ type: 'full-reload' })
+        } catch (err) {
+          console.error('[vike-plugins] Error during plugin regeneration:', err)
+        }
+      }
+
+      const debouncedOnPluginChange = (): void => {
+        if (debounceTimer) clearTimeout(debounceTimer)
+        debounceTimer = setTimeout(() => {
+          debounceTimer = null
+          onPluginChange()
+        }, 300)
+      }
+
+      // React to the plugins directory itself appearing or disappearing.
+      // Only the specific plugins dir path triggers action — sibling dirs
+      // in the same parent directory are ignored.
+      const handleParentChange = (eventPath: string): void => {
+        if (resolve(eventPath) !== pd) return
+
+        pdExists = existsSync(pd)
+
+        if (pdExists) {
+          // Newly created — add explicit watcher for file events inside it.
+          server.watcher.add(pd)
+        }
+        debouncedOnPluginChange()
+      }
+
+      server.watcher.on('addDir', handleParentChange)
+      server.watcher.on('unlinkDir', handleParentChange)
+
+      // React to individual plugin files inside the plugins directory.
+      // Guarded by pdExists so no-op when the dir hasn't been created yet.
       const isPluginFile = (path: string): boolean =>
-        path.startsWith(pd) && /\.(ts|js|mts|mjs)$/.test(path)
+        pdExists && path.startsWith(pd) && /\.(ts|js|mts|mjs)$/.test(path)
 
       const handleChange = (path: string): void => {
         if (!isPluginFile(path)) return
-
-        const mod = server.moduleGraph.getModuleById(RESOLVED_VIRTUAL_ID)
-        if (mod) {
-          server.moduleGraph.invalidateModule(mod)
-        }
-        server.moduleGraph.getModuleById(RESOLVED_VIRTUAL_ID)
-        regenerateTypes()
-
-        server.ws.send({ type: 'full-reload' })
+        debouncedOnPluginChange()
       }
 
       server.watcher.on('add', handleChange)
       server.watcher.on('unlink', handleChange)
       server.watcher.on('change', handleChange)
+
+      // Add explicit watcher if directory already exists at startup
+      if (pdExists) {
+        server.watcher.add(pd)
+      }
     },
 
     buildStart() {

@@ -16,6 +16,8 @@ playwright-report/
 coverage/
 .nyc_output/
 
+.IMPROVE.md
+
 # TypeScript build info
 *.tsbuildinfo
 

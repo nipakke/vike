@@ -20,7 +20,7 @@ function buildPluginEntries(
   return pluginFiles
     .map((file) => {
       const absPath = resolve(pluginsDir, file.filename).replace(/\\/g, '/')
-      const key = propertyKey(file.baseName)
+      const key = propertyKey(file.suggestedName)
       return `${indent}// @plugin ${file.filename}
 ${indent}${key}: PluginProvide<typeof import('${absPath}').default>`
     })

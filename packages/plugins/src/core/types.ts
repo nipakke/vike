@@ -16,13 +16,12 @@ export type VikePluginHook<T = void> = (
   ctx: PageContext
 ) => { provide: T } | void | Promise<{ provide: T } | void>
 
-/** The shape the user passes to definePlugin(). */
+/** Options for definePlugin()'s second positional argument. */
 export type VikePluginOptions<T = void> = {
   name?: string
   enforce?: Enforcement
   order?: number
   parallel?: boolean
-  setup: VikePluginHook<T>
 }
 
 /**
