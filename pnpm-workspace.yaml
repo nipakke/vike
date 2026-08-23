@@ -2,16 +2,16 @@ packages:
   - packages/*
   - playgrounds/*
 catalog:
-  "@nuxt/ui": ^4.8.0
+  "@nuxt/ui": ^4.11.0
   "@types/node": ^25.6.0
-  "@unhead/vue": ^2.1.13
+  "@unhead/vue": ^3.4.0
   "@universal-middleware/core": ^0.4.17
   "@vikejs/h3": ^0.2.0
   "@vitejs/plugin-vue": ^6.0.6
   h3: ~1.15
   tailwindcss: ^4.2.4
   typescript: ^6.0.2
-  unhead: ^2
+  unhead: ^3.4.0
   vike: ^0.4.259
   vike-vue: ^0.9.11
   vite: ^8
