@@ -1,5 +1,13 @@
 # @nipakke/vike-nuxt-ui
 
+## 0.1.6
+
+### Patch Changes
+
+- 360208f: fix: require Nuxt UI 4.11 and fix SSR head rendering
+
+  Nuxt UI 4.11 is now required (was 4.x). This fixes broken server-side head rendering that stopped critical styles (color mode, CSS variables) from being injected after upgrading to Nuxt UI 4.11.
+
 ## 0.1.5
 
 ### Patch Changes
