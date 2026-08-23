@@ -80,7 +80,7 @@
     "vue": "catalog:"
   },
   "peerDependencies": {
-    "@nuxt/ui": "4.x",
+    "@nuxt/ui": "^4.11.0",
     "tailwindcss": "4.x",
     "vike": ">=0.4.249",
     "vike-vue": ">=0.7.0",

@@ -30,9 +30,11 @@ export default async (pageContext: PageContextServer) => {
     );
   }
 
-  // nuxt/ui 4.8 changed colors.ts to pass a raw ComputedRef directly to useHead innerHTML
-  // instead of a getter fn: https://github.com/nuxt/ui/commit/00b747616fc4890a3fe385b99b0202db02af2228#diff-748120e89203f34cef10afaa214550c346e5919add4581bf6e22a0fa277403a7R47
-  // This breaks renderSSRHead's JSON.stringify in non-Nuxt SSR contexts.
+  // Nuxt UI's colors plugin passes a raw ComputedRef as style[].innerHTML to useHead:
+  //  - 4.8 changed to pass a raw ComputedRef instead of a getter fn:
+  //    https://github.com/nuxt/ui/commit/00b747616fc4890a3fe385b99b0202db02af2228#diff-748120e89203f34cef10afaa214550c346e5919add4581bf6e22a0fa277403a7R47
+  //  - 4.11 still does this (runtime/plugins/colors.js), and Unhead 3.x does not unwrap
+  //    Vue refs in SSR entries (resolveTags only applies head.resolvedOptions.propResolvers).
   // toValue() handles refs, computed, getter fns, and plain values — so this works across all versions.
   for (const [, entry] of unhead.entries) {
     const styles: any[] = (entry.input as any)?.style ?? [];
@@ -44,8 +46,22 @@ export default async (pageContext: PageContextServer) => {
   }
 
   // https://ui.nuxt.com/docs/getting-started/integrations/ssr#color-scheme-detection
+  //
+  // NOTE: The head instance is created by Nuxt UI's vue-plugin from @unhead/vue/client.
+  // Nuxt UI >= 4.11 depends on @unhead/vue 3.x, whose head instances do NOT expose a
+  // resolveTags() method (it's a standalone util in unhead/utils). We build against
+  // @unhead/vue ^3.4.0 so this renderSSRHead call matches the head Nuxt UI provides —
+  // which is why this package requires @nuxt/ui ^4.11.0 (see peerDependencies).
+  //
+  // renderSSRHead carries a @deprecated marker ("use head.render()") in unhead 3.x,
+  // but that guidance only applies to heads created with a server renderer
+  // (@unhead/vue/server createHead / unhead/server). Nuxt UI creates its head via
+  // @unhead/vue/client, whose render() is the debounced DOM renderer and returns
+  // undefined server-side. renderSSRHead is the ONLY API that SSR-renders the
+  // client-created head, so we keep it here.
   try {
-    const { headTags } = await renderSSRHead(unhead);
+    // renderSSRHead is synchronous in unhead 3.x (2.x returned a Promise).
+    const { headTags } = renderSSRHead(unhead);
     return headTags;
   } catch (error) {
     console.error("\x1b[41m\x1b[97m [vike-nuxt-ui] SSR HEAD RENDER FAILED \x1b[0m");
